@@ -1,0 +1,126 @@
+import React, {Component} from 'react';
+import { View, ListView, Alert, AlertIOS} from 'react-native';
+
+import Header from './Components/Header'; 
+import ListItem from './Components/ListItem';
+import Button from './Components/Button'; 
+
+
+import * as firebase from 'firebase';  
+var config = {
+  apiKey: "AIzaSyCQmRqHywQeY84BCqAXE1JuEIZcyvdCNME",
+  authDomain: "inventory-ii.firebaseapp.com",
+  databaseURL: "https://inventory-ii.firebaseio.com",
+  projectId: "inventory-ii",
+  storageBucket: "inventory-ii.appspot.com",
+  messagingSenderId: "423736883120"
+};
+firebase.initializeApp(config);
+var database = firebase.database(); 
+
+export default class App extends Component {
+  // Setup and state
+  constructor(props){
+    super(props);
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2
+      })
+    };
+    this.itemsRef = database.ref('InventoryItems');
+  }
+  componentDidMount(){
+    this.listenForItem(this.itemsRef);
+  }
+  componentDidUnMount(){
+    this.state.itemsRef.off('value');
+  }
+  render(){
+    return (
+      <View style={styles.container}>
+      <Header title="Inventory Simple"/>
+      <ListView
+        dataSource = {this.state.dataSource}
+        renderRow = {this.renderItem.bind(this)}
+        enableEmptySection = {true}
+        style = {styles.ListView}
+      />
+      <Button title = "Add Item" onPress={this.addItem.bind(this)} />
+      </View>
+        
+    )
+  }
+  renderItem(item){
+    const onPress = () => {
+      Alert.alert(
+        'Delete Item', 
+        'delete ' + item.title + ' ?',
+        [{text: 'Cancel', onPress: () => console.log('cancel Pressed'), style: 'cancel'},
+          {text: 'OK', onPress: () => this.itemsRef.child(item._key).remove()},
+      ],
+      {cancelable: false}
+      )
+
+    }; 
+    const onLongPress = () => {
+      AlertIOS.prompt(
+        'Edit Item', 
+        'current item is ' + item.title, 
+        [
+          {text: 'Cancel', onPress: () => console.log('cancel Pressed'), style: 'cancel'}, 
+          {text: 'OK', onPress: (text) => this.itemsRef.child(item._key).update({title: text})},
+        ],
+      )
+    }; 
+    return (
+      <ListItem item={item} onPress={onPress} onLongPress={onLongPress}/>
+
+    );
+
+  }
+  listenForItem(itemsRef){
+    itemsRef.on('value', (snap) => {
+      // get array of children 
+      var items = []; 
+      snap.forEach((child) => {
+        items.push({
+          title: child.val().title,
+          _key: child.key
+        });
+      });
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(items)
+      });
+
+    });
+  }
+  addItem(){
+    AlertIOS.prompt(
+      'Add Item', 
+      null, 
+      [
+        {text: 'Cancel', onPress: () => console.log('cancel Pressed'), style: 'cancel'}, 
+        {text: 'OK', onPress: (text) => this.itemsRef.push({title: text})},
+      ],
+    )
+  }
+}
+const styles = {
+  container: {
+    backgroundColor: '#f2f2f2', 
+    flex: 1
+  }, 
+  listView: {
+    flex: 1
+  }
+};
+/*
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+*/
