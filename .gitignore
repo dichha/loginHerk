@@ -16,4 +16,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-Components/db/DbConfig.js
+#secrets
+/Components/db/*
