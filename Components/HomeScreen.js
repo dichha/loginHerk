@@ -2,13 +2,22 @@ import {
     Component, 
     React
 } from 'react';
+import {Button} from 'react-native';
+import {
+    StackNavigator, 
+}from 'react-navigation'; 
+
+const App = StackNavigator({
+    Home: {screen: HomeScreen}, 
+    Profile: {screen: ProfileScreen},
+});
 
 class HomeScreen extends Component{
     static navigationOptions = {
         title: 'Welcome',
     };
     render(){
-        const {navigation} = this.props.navigation; 
+        const {navigate} = this.props.navigation; 
         return{
             <Button 
                 title="Go to Jane's profile"
@@ -19,3 +28,4 @@ class HomeScreen extends Component{
         };
     }
 }
+export default HomeScreen; 

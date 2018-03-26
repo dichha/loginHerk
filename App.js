@@ -4,8 +4,17 @@ import * as firebase from 'firebase';
 import { StackNavigator, TabNavigator, TabBarBottom} from 'react-navigation';
 import { Ionicons } from "@expo/vector-icons";
 
-import  Login  from './Components/Login';  
+import  Login  from './Components/LoginForm';  
+import WelcomeAdmin from './Components/WelcomeAdmin';
+
 class Home extends Component{
+  static navigationOptions = {
+    title: 'Home', 
+    headerStyle: {
+        backgroundColor: 'yellow',
+    }, 
+      headerTintColor: 'black',
+  }; 
   render(){
     return(
       <View style={styles.container}>
@@ -14,16 +23,37 @@ class Home extends Component{
           title = "Go to Login"
           onPress = {() => this.props.navigation.navigate('Login')}
         />
+        {/*
+         <Button
+          title = "Go to WelcomeAdmin"
+          onPress = {() => this.props.navigation.navigate('WelcomeAdmin')}
+        />
+        */}
       </View>
     );
   }
 }
 
+const RootStack = StackNavigator(
+  {
+    Home: {screen: Home}, 
+    Login: {screen: Login}, 
+    WelcomeAdmin: {screen: WelcomeAdmin},
+  }
+); 
+
+export default class App extends React.Component{
+  render(){
+    return <RootStack/>
+  }
+}
+/*
 const HomeStack = StackNavigator({
   Home: {screen: Home}, 
   Login: {screen: Login},
+
 });
-/*
+
 export default class App extends Component {
 
   render() {
@@ -35,6 +65,7 @@ export default class App extends Component {
     );
   }
 }*/
+/*
 export default TabNavigator(
   {
     Home: {screen: HomeStack},
@@ -47,11 +78,11 @@ export default TabNavigator(
         if(routeName === 'Home'){
           iconName = `ios-information-circle${focused ? '' : '-outline'}`;
         }
-        /*
-        }else if(routeName === 'Settings'){
-          iconName = `ios-options${focused ? '': '-outline'}`;
-        }
-        */
+        
+        //}else if(routeName === 'Settings'){
+        //  iconName = `ios-options${focused ? '': '-outline'}`;
+        //}
+        
         // You can return any component that you like here. We usually use an icon component from react-native-vector-icons
         
         return <Ionicons name={iconName} size={25} color={tintColor} />;
@@ -68,6 +99,7 @@ export default TabNavigator(
 
   },
 );
+*/
 
 const styles = StyleSheet.create({
   container: {

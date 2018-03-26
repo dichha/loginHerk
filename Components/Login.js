@@ -4,13 +4,26 @@ import LoginForm from './LoginForm';
 
 
 class Login extends Component{
-    render(){
-    return(
-        <View style={styles.container}>
-        <LoginForm/>
-        </View>
-    );
+    static navigationOptions = {
+        title: 'Login', 
+        headerStyle: {
+            backgroundColor: 'yellow',
+        },
+        headerTintColor: 'black',
+    };
+    
+    printNav = () =>{
+        console.log(this.props.navigation.state.routeName);
     }
+    render(){
+        return(
+            <View style={styles.container}>
+            {this.printNav()}
+            <LoginForm/>
+            </View>
+        );
+    }
+
 };
 const styles = StyleSheet.create({
     container: {
