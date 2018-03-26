@@ -18,3 +18,4 @@ yarn-error.log*
 
 # secrets
 /Components/db/*
+/db.js
