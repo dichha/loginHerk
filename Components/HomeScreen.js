@@ -1,7 +1,4 @@
-import {
-    Component, 
-    React
-} from 'react';
+import  React from 'react';
 import {Button} from 'react-native';
 import {
     StackNavigator, 
@@ -12,7 +9,7 @@ const App = StackNavigator({
     Profile: {screen: ProfileScreen},
 });
 
-class HomeScreen extends Component{
+class HomeScreen extends React.Component{
     static navigationOptions = {
         title: 'Welcome',
     };

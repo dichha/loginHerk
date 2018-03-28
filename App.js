@@ -1,11 +1,36 @@
 import React, {Component} from 'react';
-import { StyleSheet, Button, Text, View } from 'react-native';
+import { StyleSheet, Button, Text, View, AsyncStorage, ActivityIndicator, StatusBar } from 'react-native';
 import * as firebase from 'firebase';  
-import { StackNavigator, TabNavigator, TabBarBottom} from 'react-navigation';
+import { StackNavigator, TabNavigator, TabBarBottom, SwitchNavigator} from 'react-navigation';
 import { Ionicons } from "@expo/vector-icons";
 
 import  Login  from './Components/LoginForm';  
 import WelcomeAdmin from './Components/WelcomeAdmin';
+
+class AuthLoadingScreen extends React.Component{
+  constructor(props){
+    super(props);
+    this._bootstrapAsync();
+  }
+  // Fetch the token from storage then navigate to appropriate place
+  _bootstrapAsync = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    console.log(AsyncStorage.getAllKeys());
+     // This will switch to the App screen or Auth screen and this loading screen will be unmounted and thrown away
+
+    console.log("userToken: " + userToken);
+    this.props.navigation.navigate(userToken? 'Auth': 'App');
+  }
+  // render any loading content that you like here
+  render(){
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator/>
+        <StatusBar barStyle="default"/>
+      </View>
+    );
+  }
+};
 
 class Home extends Component{
   static navigationOptions = {
@@ -14,7 +39,8 @@ class Home extends Component{
         backgroundColor: 'yellow',
     }, 
       headerTintColor: 'black',
-  }; 
+  };
+
   render(){
     return(
       <View style={styles.container}>
@@ -33,7 +59,21 @@ class Home extends Component{
     );
   }
 }
+const AppStack = StackNavigator({Home: Home,Login: Login});
+const AuthStack = StackNavigator({WelcomeAdmin: WelcomeAdmin});
 
+export default SwitchNavigator(
+  {
+    AuthLoading: AuthLoadingScreen, 
+    App: AppStack, 
+    Auth: AuthStack,
+  }, 
+  {
+    initialRouteName: 'AuthLoading',
+  }
+);
+
+/*
 const RootStack = StackNavigator(
   {
     Home: {screen: Home}, 
@@ -47,6 +87,7 @@ export default class App extends React.Component{
     return <RootStack/>
   }
 }
+*/
 /*
 const HomeStack = StackNavigator({
   Home: {screen: Home}, 

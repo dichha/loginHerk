@@ -1,27 +1,10 @@
 
 import React, { Component } from 'react';
-import { View, Button, Text } from 'react-native';
+import { View, Button, Text, AsyncStorage } from 'react-native';
 import { TitledInput } from './TitledInput';
 import Spinner from './Spinner';
 import WelcomeAdmin from './WelcomeAdmin'; 
 import {firebaseApp} from './db/DbConfig';
-
-// import * as firebase from 'firebase';
-
-// Initialize Firebase
-// you can move this config to env variable or some place else safe.
-/*
-const firebaseConfig = {
-    apiKey: "AIzaSyBN0_cWZog746XQiSrGUijvjbNPNewfmN4",
-    authDomain: "loginherk.firebaseapp.com",
-    databaseURL: "https://loginherk.firebaseio.com",
-    projectId: "loginherk",
-    storageBucket: "loginherk.appspot.com",
-    messagingSenderId: "363493939543"
-
-}
-export const firebaseApp = firebase.initializeApp(firebaseConfig);
-*/
 
 class LoginForm extends Component {
     static navigationOptions = {
@@ -32,6 +15,21 @@ class LoginForm extends Component {
         headerTintColor: 'black',
     };
     state = { email: '', password: '', error: '', loading: false };
+
+    
+    _signInAsync = async (email) => {
+        const userTokenValue = Math.round((Math.random()*1000));
+        await AsyncStorage.setItem('userToken', userTokenValue.toString());
+        let userToken = await AsyncStorage.getItem('userToken');
+       
+        await AsyncStorage.setItem('userEmail', email);
+        
+        console.log("userToken after setting: " + userToken);
+        //let userEmail = await AsyncStorage.getItem('userEmail');
+        //console.log("User's email in loginform: " + userEmail);
+        this.props.navigation.navigate('Auth');
+        //this.props.navigation.navigate({routeName: 'Auth', key: 'Auth', params: {user: email}});
+    };
     onLoginPress = () =>{
         this.setState({ error: '', loading: true });
 
@@ -39,8 +37,9 @@ class LoginForm extends Component {
         firebaseApp.auth().signInWithEmailAndPassword(email, password)
             .then(() => { this.setState({ error: '', loading: false });
                         console.log("Logged in successfully");
-                        console.log({email});
-                        this.props.navigation.navigate('WelcomeAdmin', {user: email});
+                        //console.log({email});
+                        this._signInAsync(email);
+                       
                         })
             .catch(() => {
                 //Login was not successful, let's create a new account
