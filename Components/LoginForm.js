@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Button, Text, AsyncStorage } from 'react-native';
+import { View, Button, Text, AsyncStorage, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { TitledInput } from './TitledInput';
 import Spinner from './Spinner';
 import WelcomeAdmin from './WelcomeAdmin'; 
@@ -60,6 +60,7 @@ class LoginForm extends Component {
     render() {
         
         return (
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.container}>
                    
                     <TitledInput 
@@ -78,7 +79,10 @@ class LoginForm extends Component {
                     />
                     <Text style={styles.errorTextStyle}>{this.state.error}</Text>
                     {this.renderButtonOrSpinner()}
+                   
             </View>
+            </TouchableWithoutFeedback>
+           
         );
     }
 }
